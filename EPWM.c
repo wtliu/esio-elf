@@ -689,8 +689,6 @@ void InitEPwm11() // Sincroniza o SDFM1
      * Comportamento em eventos de emulação
      */
 
-
-
     EPwm11Regs.TBCTL.bit.FREE_SOFT = 0;         //Stop after the next time-base counter increment or decrement.
 
     //
@@ -714,7 +712,7 @@ void InitEPwm11() // Sincroniza o SDFM1
 void InitEPwm12() // Sincroniza o SDFM2 - sincronizar com timer1 - ADC
 {
 
-    CMPC12 = 1999; // Ajustar
+    CMPC12 = 1999;     // Criar macro para as variaveis
     CMPD12 =  1999;
 
     // Setup TBCLK

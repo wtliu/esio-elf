@@ -17,6 +17,7 @@ extern const float Current_prot;
 
 
 
+
 //Reinicialização
 extern const unsigned long Tempo_base_reinicio;
 extern const unsigned Multiplicador_tempo_reinicio;
