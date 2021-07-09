@@ -690,6 +690,7 @@ void InitEPwm11() // Sincroniza o SDFM1
      */
 
 
+
     EPwm11Regs.TBCTL.bit.FREE_SOFT = 0;         //Stop after the next time-base counter increment or decrement.
 
     //
