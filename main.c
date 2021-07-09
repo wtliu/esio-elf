@@ -117,7 +117,7 @@ void Inicializacao_Geral() {
 
     //Configurações de ADC
     InitAdcaMultCh(0x1B);   //     Trigger vem EPWM 12 socA
-    InitAdcbMultCh(0x1B);
+    InitAdcbMultCh(0x1B);   //     Trigger vem EPWM 12 socA
 
 
     //Tempo morto
