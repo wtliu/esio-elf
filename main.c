@@ -116,7 +116,7 @@ void Inicializacao_Geral() {
     InitPieVectTable();
 
     //Configurações de ADC
-    InitAdcaMultCh(0x1B);   //EPWM 12 socA    Trigger vem do CPU1 Timer 1, TINT1n
+    InitAdcaMultCh(0x1B);   //     Trigger vem EPWM 12 socA
     InitAdcbMultCh(0x1B);
 
 
