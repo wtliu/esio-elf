@@ -208,7 +208,7 @@ void InitSdfm(){
 
     DELAY_US(1000);
 
-    Clr_Flag_DCAEVT();      // limpa as flags
+    Clr_Flag_DCAEVT();      // limpa as flags do DCAEVT
 
     Sdfm_enableMIE(SDFM1);
     Sdfm_enableMIE(SDFM2);

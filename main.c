@@ -191,6 +191,10 @@ void Inicializacao_Controle() {
 
   //Depuração
     cont_descarte = 0;
+
+   //
+    sdfm_index_SD1 = sdfm_index_SD2 = 0;
+
 }
 
 //Estado em que o sistema fica aguardando um tempo para reiniciar

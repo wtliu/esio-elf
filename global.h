@@ -165,10 +165,6 @@ extern float Vo[2], Vg[2]; //Valores instantâneos no SI após calibração
 
 
 
-//
-extern float fs, Ts;
-
-
 //Modulacao vetorial
 extern float m_albe[2];
 extern float m_abc1[3], m_abc2[3];
@@ -217,6 +213,9 @@ extern Uint16 VP_measure[SDFM_BUF_LEN], Ia_measure[SDFM_BUF_LEN], Buf[SDFM_BUF_L
 
 extern uint16_t CMPC11, CMPD11;  // Variaveis para sincronizar o SDFM com os PWMs
 extern uint16_t CMPC12, CMPD12;
+
+
+extern int sdfm_index_SD1, sdfm_index_SD2; // variavel para indexar a amostra para sinc
 
 
 // Variaveis de teste

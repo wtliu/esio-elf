@@ -66,6 +66,8 @@ INLINE void ConfigurarModulacaoVetorial();
 void programar_moduladoras(float mod1, float mod2, volatile union CMPA_REG *CMPA1, volatile union CMPB_REG *CMPB1, volatile union CMPA_REG *CMPA4, volatile union CMPB_REG *CMPB4);
 void spacev_3L(const float *m, float *mod);
 
+//index sdfm samples
+//int sdfm_index;
 
 //********** INTERRUPÇÕES ************//
 
@@ -80,6 +82,7 @@ interrupt void EPWM7_ISR(void)
 
 
     static int GPIO4_count = 0;            // Counter for pin toggle
+
 
       // Debug - led blink in interrupt
      if(GPIO4_count++ > 3500)                  // Toggle slowly to see the LED blink
@@ -104,6 +107,9 @@ interrupt void EPWM7_ISR(void)
 //Interrupção lenta para controle
 interrupt void ADCA2_ISR(void)
 {
+
+   sdfm_index_SD1 = 1;                        // Quando entra na interrupção de controle seta o index
+   sdfm_index_SD2 = 1;
 
   //Habilita interrupções simultâneas
     EINT;
@@ -142,14 +148,21 @@ interrupt void SD1_ISR(void)
 {
     // Leitura de Vn - SD1 -Filter 3
 
-    Uint32 sdfmReadFlagRegister1 = 0;
-    static uint16_t loopCounter1 = 0;
+   Uint32 sdfmReadFlagRegister1 = 0;
+   //static uint16_t loopCounter1 = 0;
+   static int index1;
+
+    if(sdfm_index_SD1 == 1){
+        sdfm_index_SD1 = 0;
+        index1 = 0;
+    }
+    index1 = index1 + 1;
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;         // Must acknowledge the PIE group
 
     sdfmReadFlagRegister1 = Sdfm_readFlagRegister(SDFM1);
 
-
+    /*
     if(loopCounter1 < MAX_SAMPLES)
           {
             Filter3_Result_SD1[loopCounter1++] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1);  // Vn - lado negativo
@@ -159,8 +172,11 @@ interrupt void SD1_ISR(void)
             loopCounter1 = 0;  // volta para o incio do vetor
             Filter3_Result_SD1[loopCounter1++] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1);  // Vn
            }
+    */
 
-
+    if (index1 ==7){
+        Filter3_Result_SD1 [6] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1); // Vn
+    }
 
     Sdfm_clearFlagRegister(SDFM1,sdfmReadFlagRegister1);
 
@@ -174,13 +190,22 @@ interrupt void SD2_ISR(void)
     // Leitura de Ia - SD2 -Filter 2, Ib SD2 Filter 3, Vp SD2 Filter 4
 
     Uint32 sdfmReadFlagRegister2 = 0;
-    static uint16_t loopCounter2 = 0;
+    //static uint16_t loopCounter2 = 0;
+    static int index2;
+
+    if(sdfm_index_SD2 == 1){
+        sdfm_index_SD2 = 0;
+        index2 = 0;
+    }
+
+    index2 = index2 + 1;
 
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;         // Must acknowledge the PIE group
 
     sdfmReadFlagRegister2 = Sdfm_readFlagRegister(SDFM2);
 
+    /*
     if(loopCounter2 < MAX_SAMPLES)
            {
             Filter2_Result_SD2[loopCounter2] = SDFM2_READ_FILTER2_DATA_16BIT;  // Ia
@@ -195,6 +220,14 @@ interrupt void SD2_ISR(void)
                 Filter4_Result_SD2[loopCounter2++] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
 
             }
+            */
+
+    if (index2 == 7){
+            Filter2_Result_SD2 [6] = SDFM2_READ_FILTER2_DATA_16BIT; //Ia
+            Filter3_Result_SD2[6] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
+            Filter4_Result_SD2[6] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
+
+        }
 
     Sdfm_clearFlagRegister(SDFM2,sdfmReadFlagRegister2);
     sdfmReadFlagRegister2 = Sdfm_readFlagRegister(SDFM2);
