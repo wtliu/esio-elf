@@ -86,7 +86,7 @@ void done(void)
     for (;;);
 }
 
-uint16_t  HLT, LLT, HLT2, LLT2;
+uint16_t  HLT, LLT;
 
 void InitSdfm(){
 
@@ -143,8 +143,6 @@ void InitSdfm(){
 
    HLT = 0x7FFF;    //Over value threshold settings - default: 32767 - 0x7FFF
    LLT = 0x0000;    //Under value threshold settings
-   // HLT2 = 0x428f;
-   // LLT2 = 0x3270;
 
    Sdfm_configureComparator(SDFM1, FILTER3, SINC3, OSR_32, HLT, LLT);   // SDFMx, FILTERx, SINCx, OSR_32, HLT, LLT)
    Sdfm_configureComparator(SDFM2, FILTER2, SINC3, OSR_32, Lim_sup_I, Lim_inf_I);

@@ -673,15 +673,15 @@ void InitEPwm9()
 }
 
 
-void InitEPwm11() // Sincroniza o SDFM1
+void InitEPwm11() // Sincroniza o SDFM1 - Quando contador atinge CMPC SDFM reseta
 {
 
 
-    CMPD11 =  1999; // Ajustar
+    CMPD11 =  1999; // Ajustado CMPD para o fim do periodo do EPWM11
 
     // Setup TBCLK
     //
-    EPwm11Regs.TBPRD = 1999;                     // Set timer period
+    EPwm11Regs.TBPRD = PRD_CTRL ;                     // Set timer period for 5 kHz - Tclock_pwm = 10e6
     EPwm11Regs.TBPHS.bit.TBPHS = 0x0000;         // Phase is 0
     EPwm11Regs.TBCTR = 0x0000;                   // Clear counter
 
@@ -703,22 +703,22 @@ void InitEPwm11() // Sincroniza o SDFM1
     //
     // Set Compare values
     //
-    EPwm11Regs.CMPC = CMPD11;
+    EPwm11Regs.CMPC = CMPD11;   //
     EPwm11Regs.CMPD = CMPD11;
 
 
 }
 
-void InitEPwm12() // Sincroniza o SDFM2 - sincronizar com timer1 - ADC
+void InitEPwm12() // Sincroniza o SDFM2 - Quando contador atinge CMPC SDFM reseta - sincronizar com timer1 -  e trigger ADC
 {
 
-    CMPC12 = 1999;     // Criar macro para as variaveis
+    CMPC12 = 1999;     // // Ajustado CMPC e CMPD para o fim do periodo do EPWM12
     CMPD12 =  1999;
 
     // Setup TBCLK
     //
 
-    EPwm12Regs.TBPRD = 1999 ;                    // Set timer period para Ajustar fctr = 5000 Hz Ajustar ***
+    EPwm12Regs.TBPRD = PRD_CTRL  ;               // Set timer period para Ajustar fctr = 5000 Hz - Tclock_pwm = 10e6  ***Ajustar
     EPwm12Regs.TBPHS.bit.TBPHS = 0x0000;         // Phase is 0
     EPwm12Regs.TBCTR = 0x0000;                   // Clear counter
 

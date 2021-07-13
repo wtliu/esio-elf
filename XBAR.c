@@ -31,7 +31,6 @@ void InitXbar(void)
     InputXbarRegs.INPUT11SELECT = 0;              // Feed GPIO0 to eCAP5 via Input X-Bar
     InputXbarRegs.INPUT12SELECT = 0;              // Feed GPIO0 to eCAP6 via Input X-Bar
     InputXbarRegs.INPUT13SELECT = 0;              // Feed GPIO0 to XINT4 via Input X-Bar
-
     InputXbarRegs.INPUT14SELECT = 0;              // Feed GPIO0 to XINT5 via Input X-Bar
 
 

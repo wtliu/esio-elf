@@ -92,6 +92,10 @@ typedef enum {
 #define PERIODO_INICIAL 1000
 #define TEMPO_MORTO 10
 
+//Periodo EPW11 e EPWM 12 igual f_ctrl
+#define PRD_CTRL 1999      // Tclock_pwm = 10e6
+
+
 //Contadores de tempo
 extern unsigned tempo_segundo;
 extern unsigned long tempo_cpu;

@@ -29,11 +29,11 @@ const unsigned Multiplicador_tempo_reinicio = 1;
 const unsigned long Tempo_operacao_OK = 600; //segundos
 
 //Especificações
-const float f_clk = 10e6; //Frequência de clock do modulador PWM
-const float Tm = 1e-6; //Tempo morto [s]
-float Tperm_min = 10e-6; //Tempo mínimo de permanência de uma sequência de dois vetores
-const float Mnom = 1.0; //Índice de modulação para condição nominal
-const float fo_nom = 50.0; //Frequência fundamental nominal = 60 (default)
+const float f_clk = 10e6;      //Frequência de clock do modulador PWM
+const float Tm = 1e-6;         //Tempo morto [s]
+float Tperm_min = 10e-6;       //Tempo mínimo de permanência de uma sequência de dois vetores
+const float Mnom = 1.0;        //Índice de modulação para condição nominal
+const float fo_nom = 50.0;     //Frequência fundamental nominal = 60 (default)
 
 //Rampa de partida
 const float rampa_inc = 1.0 / (60.0*f_ctrl); //Inclinação da rampa de partida [pu/200us]
