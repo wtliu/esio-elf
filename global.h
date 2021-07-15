@@ -202,7 +202,7 @@ extern unsigned cont_descarte;
 // SDFM variables
 
 #define SDFM_BUF_LEN         7              // SDFM buffer length
-#define MAX_SAMPLES          7             // SDFM samples
+#define MAX_SAMPLES          1             // SDFM samples
 
 extern int16_t  Filter3_Result_SD1[MAX_SAMPLES]   ; // Tensao Vn - Vdc
 extern int16_t  Filter2_Result_SD2[MAX_SAMPLES]   ; // Corrente IinvA

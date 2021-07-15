@@ -10,7 +10,7 @@
 
 
 // Macros de proteção
-#define CURR_PROT 5.0     // valor maximo de corrente para a proteção do SDFM
+#define CURR_PROT 12.0     // valor maximo de corrente para a proteção do SDFM
 
 
 //Macros da modulação V/f
@@ -19,8 +19,8 @@
 #define InitV 6.0        // freq
 
 // Constantes de proteção
-const float VDC_MAX = 300.0;      // tensão máxima do barramento
-const float VDC_DES = 80.0;     // tensão máxima de desbalanço do barramento
+const float VDC_MAX = 600.0;      // tensão máxima do barramento
+const float VDC_DES = 85.0;     // tensão máxima de desbalanço do barramento
 const float Current_prot = CURR_PROT;
 
 //Reinicialização
@@ -46,7 +46,7 @@ const float rampa_inc = 1.0 / (60.0*f_ctrl); //Inclinação da rampa de partida [p
 const int16_t Offset_Io_a = 38;
 const int16_t Offset_Io_b = 42;
 
-const int16_t Offset_vdc_p = 35;
+const int16_t Offset_vdc_p = 35;  //35
 const int16_t Offset_vdc_n = 145;
 
 const int16_t Offset_Vo = 2045;

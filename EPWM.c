@@ -603,7 +603,7 @@ void InitEPwm9()
     EPwm9Regs.CMPCTL.bit.LOADAMODE = CC_CTR_ZERO; // Load on Zero
     EPwm9Regs.CMPCTL.bit.LOADBMODE = CC_CTR_ZERO;
 
-    // Configura o link do período com o EPwm2
+    // Configura o link do período com o EPwm7
     EPwm9Regs.EPWMXLINK.bit.TBPRDLINK = 0b0110;
 
 
@@ -676,20 +676,22 @@ void InitEPwm9()
 void InitEPwm11() // Sincroniza o SDFM1 - Quando contador atinge CMPC SDFM reseta
 {
 
-
     CMPD11 =  1999; // Ajustado CMPD para o fim do periodo do EPWM11
 
     // Setup TBCLK
     //
+
     EPwm11Regs.TBPRD = PRD_CTRL ;                     // Set timer period for 5 kHz - Tclock_pwm = 10e6
     EPwm11Regs.TBPHS.bit.TBPHS = 0x0000;         // Phase is 0
     EPwm11Regs.TBCTR = 0x0000;                   // Clear counter
 
-    /*
-     * Comportamento em eventos de emulação
-     */
 
-    EPwm11Regs.TBCTL.bit.FREE_SOFT = 0;         //Stop after the next time-base counter increment or decrement.
+    //
+    //  Comportamento em eventos de emulação
+    //
+
+    EPwm11Regs.TBCTL.bit.FREE_SOFT = 0;         // 0b10 - free run
+                                                  //  0 - Stop after the next time-base counter increment or decrement.
 
     //
     // Setup counter mode
@@ -703,9 +705,12 @@ void InitEPwm11() // Sincroniza o SDFM1 - Quando contador atinge CMPC SDFM reset
     //
     // Set Compare values
     //
-    EPwm11Regs.CMPC = CMPD11;   //
+    //EPwm11Regs.CMPC = CMPD11;   //
     EPwm11Regs.CMPD = CMPD11;
 
+
+
+    DELAY_US(1);
 
 }
 
@@ -718,17 +723,18 @@ void InitEPwm12() // Sincroniza o SDFM2 - Quando contador atinge CMPC SDFM reset
     // Setup TBCLK
     //
 
+
     EPwm12Regs.TBPRD = PRD_CTRL  ;               // Set timer period para Ajustar fctr = 5000 Hz - Tclock_pwm = 10e6  ***Ajustar
     EPwm12Regs.TBPHS.bit.TBPHS = 0x0000;         // Phase is 0
     EPwm12Regs.TBCTR = 0x0000;                   // Clear counter
 
-    /*
-     * Comportamento em eventos de emulação
-     */
 
+    //
+    // Comportamento em eventos de emulação
+    //
 
-   EPwm12Regs.TBCTL.bit.FREE_SOFT = 0;         //Stop after the next time-base counter increment or decrement
-
+   EPwm12Regs.TBCTL.bit.FREE_SOFT = 0;         // 0b10 - free run
+                                                  // 0 - Stop after the next time-base counter increment or decrement
 
     //
     // Setup counter mode
@@ -739,18 +745,20 @@ void InitEPwm12() // Sincroniza o SDFM2 - Quando contador atinge CMPC SDFM reset
     EPwm12Regs.TBCTL.bit.CLKDIV = 0b000;
 
 
-    // Config SOC dos ADs - synch pelo EPWM12
-    EPwm12Regs.ETPS.bit.SOCAPRD= 0b01;    // generate SOCA on first event
-    EPwm12Regs.ETSEL.bit.SOCAEN = 1;       // enable SOCA
-    EPwm12Regs.ETSEL.bit.SOCASEL = 0b010;  //SOCA on PRD event
+
+     // Config SOC dos ADs - synch pelo EPWM12
+     EPwm12Regs.ETPS.bit.SOCAPRD= 0b01;    // generate SOCA on first event
+     EPwm12Regs.ETSEL.bit.SOCAEN = 1;       // enable SOCA
+     EPwm12Regs.ETSEL.bit.SOCASEL = 0b010;  //SOCA on PRD event
 
 
     //
     // Set Compare values
     //
-
     EPwm12Regs.CMPC = CMPC12 ;    // Set trigger to SDF2
     EPwm12Regs.CMPD = CMPD12 ;
+
+    DELAY_US(1);
 
 }
 
@@ -766,8 +774,9 @@ void PWM_Sync()
     EPwm6Regs.TBCTR = 0;
     EPwm9Regs.TBCTR = 0;
 
-    EPwm11Regs.TBCTR = 0;
     EPwm12Regs.TBCTR = 0;
+    EPwm11Regs.TBCTR = 0;
+
 
     //Libera o clock de todos os módulos
     EALLOW;
@@ -785,6 +794,8 @@ void PWM_Sync()
 void PWM_Run() {
     //Inicializa o período
     EPwm7Regs.TBPRD = PERIODO_INICIAL;
+    EPwm12Regs.TBPRD = PRD_CTRL;
+    EPwm11Regs.TBPRD = PRD_CTRL;
 
     //Inicializa os valores de comparação
     EPwm7Regs.CMPA.bit.CMPA = PERIODO_INICIAL+1;
@@ -802,7 +813,7 @@ void PWM_Run() {
     EPwm9Regs.CMPA.bit.CMPA = PERIODO_INICIAL+1;
     EPwm9Regs.CMPB.bit.CMPB = 0;
 
-    EPwm11Regs.CMPC = CMPD11;    // Set trigger to SDF1
+    //EPwm11Regs.CMPC = CMPC11;    // Set trigger to SDF1
     EPwm11Regs.CMPD = CMPD11;
     EPwm12Regs.CMPC = CMPC12;    // Set trigger to SDF2
     EPwm12Regs.CMPD = CMPD12;

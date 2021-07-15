@@ -78,9 +78,6 @@ void spacev_3L(const float *m, float *mod);
 interrupt void EPWM7_ISR(void)
 {
 
-    //static Uint16 *Ptr_buf = Buf;
-
-
     static int GPIO4_count = 0;            // Counter for pin toggle
 
 
@@ -174,8 +171,8 @@ interrupt void SD1_ISR(void)
            }
     */
 
-    if (index1 ==7){
-        Filter3_Result_SD1 [6] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1); // Vn
+    if (index1 == 7){
+        Filter3_Result_SD1 [0] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1); // Vn
     }
 
     Sdfm_clearFlagRegister(SDFM1,sdfmReadFlagRegister1);
@@ -200,7 +197,6 @@ interrupt void SD2_ISR(void)
 
     index2 = index2 + 1;
 
-
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;         // Must acknowledge the PIE group
 
     sdfmReadFlagRegister2 = Sdfm_readFlagRegister(SDFM2);
@@ -223,10 +219,9 @@ interrupt void SD2_ISR(void)
             */
 
     if (index2 == 7){
-            Filter2_Result_SD2 [6] = SDFM2_READ_FILTER2_DATA_16BIT; //Ia
-            Filter3_Result_SD2[6] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
-            Filter4_Result_SD2[6] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
-
+            Filter2_Result_SD2[0] = SDFM2_READ_FILTER2_DATA_16BIT; // Ia
+            Filter3_Result_SD2[0] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
+            Filter4_Result_SD2[0] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
         }
 
     Sdfm_clearFlagRegister(SDFM2,sdfmReadFlagRegister2);
@@ -301,7 +296,7 @@ interrupt void XINT3_ISR(void){
 INLINE void ModulacaoVetorial()
 {
        unsigned fase;
-       static int16_t *Ptr_buf = var_teste;
+
 
     //Registrador de período
       Tsw2_mod = 0.5 * Tsw_mod; //Meio período de comutação
@@ -385,13 +380,6 @@ INLINE void ModulacaoVetorial()
       thetafix = theta2fix + theta_step;
       if (thetafix >= Q12_60deg_360) thetafix -= Q12_60deg_360;
 
-
-     *Ptr_buf++ = thetafix;
-
-     if( Ptr_buf == (var_teste + 50) )
-       {
-       Ptr_buf = var_teste;           // Rewind the pointer to beginning
-       }
 
       //Período da portadora
       EPwm7Regs.TBPRD = TBPRD;
@@ -597,9 +585,10 @@ INLINE void Instrumentacao_Vo_inv_Vg()
 INLINE void Instrumentacao_Vdc()
 {
     unsigned i;
+    static float *Ptr_buf = var_teste1;
 
-    Vdc_signed[0] = Filter4_Result_SD2[6] + Offset_vdc_p;                    // Vp lado positivo
-    Vdc_signed[1] = Filter3_Result_SD1[6] + Offset_vdc_n;                    // Vn lado negativo
+    Vdc_signed[0] = Filter4_Result_SD2[0] + Offset_vdc_p;                    // Vp lado positivo
+    Vdc_signed[1] = Filter3_Result_SD1[0] + Offset_vdc_n;                    // Vn lado negativo
 
     //Obtém o valor instantâneo das tensões individuais
         for (i=0; i<2; i++) {
@@ -626,14 +615,21 @@ INLINE void Instrumentacao_Vdc()
              TrocarEstado(_Protecao);
          }
 
+         *Ptr_buf++ = Vdc[0];
+
+              if( Ptr_buf == (var_teste1 + 50) )
+                {
+                Ptr_buf = var_teste1;           // Rewind the pointer to beginning
+                }
+
 }
 
 INLINE void Instrumentacao_Io()
 {
     unsigned fase;
 
-    Io_signed[0] = Filter2_Result_SD2[6]-Offset_Io_a;
-    Io_signed[1] = Filter3_Result_SD2[6]-Offset_Io_b;
+    Io_signed[0] = Filter2_Result_SD2[0]- Offset_Io_a;
+    Io_signed[1] = Filter3_Result_SD2[0]- Offset_Io_b;
 
 
     for (fase=0; fase<2; fase++) {

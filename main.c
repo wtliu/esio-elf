@@ -116,8 +116,8 @@ void Inicializacao_Geral() {
     InitPieVectTable();
 
     //Configurações de ADC
-    InitAdcaMultCh(0x1B);   //     Trigger vem EPWM 12 socA
-    InitAdcbMultCh(0x1B);   //     Trigger vem EPWM 12 socA
+    InitAdcaMultCh(0x1B);   //     Trigger vem EPWM 12 socA 0x1B
+    InitAdcbMultCh(0x1B);   //     Trigger vem EPWM 12 socA 0x1B
 
 
     //Tempo morto
