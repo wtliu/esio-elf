@@ -46,8 +46,8 @@ const float rampa_inc = 1.0 / (60.0*f_ctrl); //Inclinação da rampa de partida [p
 const int16_t Offset_Io_a = 38;
 const int16_t Offset_Io_b = 42;
 
-const int16_t Offset_vdc_p = 35;  //35
-const int16_t Offset_vdc_n = 145;
+const int16_t Offset_vdc_p = 145;
+const int16_t Offset_vdc_n = 5;
 
 const int16_t Offset_Vo = 2045;
 const int16_t Offset_Vg = 1861;

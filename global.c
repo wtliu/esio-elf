@@ -126,7 +126,7 @@ int16_t  Filter2_Result_SD2[MAX_SAMPLES]; // Corrente IinvA
 int16_t  Filter3_Result_SD2[MAX_SAMPLES]; // Corrente IinvB
 int16_t  Filter4_Result_SD2[MAX_SAMPLES];   // Tensão Vp - Vdc
 
-int sdfm_index_SD1, sdfm_index_SD2;
+int sdfm_index_SD1_vn, sdfm_index_SD2_vp, sdfm_index_SD2_ia, sdfm_index_SD2_ib;
 
 
 // buffer do SDFM
@@ -139,6 +139,7 @@ int sdfm_index_SD1, sdfm_index_SD2;
  // Variaveis de teste - buffers para visualização no graph signal
  int16_t  var_teste[50];
  float  var_teste1[50];
+ float  var_teste2[50];
 
  Uint16 Med_teste;
 

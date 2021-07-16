@@ -709,9 +709,6 @@ void InitEPwm11() // Sincroniza o SDFM1 - Quando contador atinge CMPC SDFM reset
     EPwm11Regs.CMPD = CMPD11;
 
 
-
-    DELAY_US(1);
-
 }
 
 void InitEPwm12() // Sincroniza o SDFM2 - Quando contador atinge CMPC SDFM reseta - sincronizar com timer1 -  e trigger ADC
@@ -745,11 +742,14 @@ void InitEPwm12() // Sincroniza o SDFM2 - Quando contador atinge CMPC SDFM reset
     EPwm12Regs.TBCTL.bit.CLKDIV = 0b000;
 
 
+    // Configura o link do período com o EPwm11
+     //EPwm12Regs.EPWMXLINK.bit.TBPRDLINK = 0b1010;
+
 
      // Config SOC dos ADs - synch pelo EPWM12
      EPwm12Regs.ETPS.bit.SOCAPRD= 0b01;    // generate SOCA on first event
      EPwm12Regs.ETSEL.bit.SOCAEN = 1;       // enable SOCA
-     EPwm12Regs.ETSEL.bit.SOCASEL = 0b010;  //SOCA on PRD event
+     EPwm12Regs.ETSEL.bit.SOCASEL = 0b001;  //SOCA on PRD event
 
 
     //
@@ -758,7 +758,6 @@ void InitEPwm12() // Sincroniza o SDFM2 - Quando contador atinge CMPC SDFM reset
     EPwm12Regs.CMPC = CMPC12 ;    // Set trigger to SDF2
     EPwm12Regs.CMPD = CMPD12 ;
 
-    DELAY_US(1);
 
 }
 
@@ -774,8 +773,8 @@ void PWM_Sync()
     EPwm6Regs.TBCTR = 0;
     EPwm9Regs.TBCTR = 0;
 
-    EPwm12Regs.TBCTR = 0;
     EPwm11Regs.TBCTR = 0;
+    EPwm12Regs.TBCTR = 0;
 
 
     //Libera o clock de todos os módulos
@@ -794,8 +793,8 @@ void PWM_Sync()
 void PWM_Run() {
     //Inicializa o período
     EPwm7Regs.TBPRD = PERIODO_INICIAL;
-    EPwm12Regs.TBPRD = PRD_CTRL;
     EPwm11Regs.TBPRD = PRD_CTRL;
+    EPwm12Regs.TBPRD = PRD_CTRL;
 
     //Inicializa os valores de comparação
     EPwm7Regs.CMPA.bit.CMPA = PERIODO_INICIAL+1;
@@ -814,9 +813,9 @@ void PWM_Run() {
     EPwm9Regs.CMPB.bit.CMPB = 0;
 
     //EPwm11Regs.CMPC = CMPC11;    // Set trigger to SDF1
-    EPwm11Regs.CMPD = CMPD11;
-    EPwm12Regs.CMPC = CMPC12;    // Set trigger to SDF2
-    EPwm12Regs.CMPD = CMPD12;
+    EPwm11Regs.CMPD = 1999; //CMPD11;
+    EPwm12Regs.CMPC = 1999;//CMPC12;    // Set trigger to SDF2
+    EPwm12Regs.CMPD = 1999;//CMPD12;
 
     //Aguarda um ciclo completo da portadora para prosseguir
     EPwm7Regs.ETCLR.bit.INT = 1;

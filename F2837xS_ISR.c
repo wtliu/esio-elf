@@ -25,6 +25,7 @@
 #include "global.h"
 #include "F2837xS_sdfm_drivers.h"       // SDFM definitions
 #include "F2837xS_struct.h"
+#include "F2837xS_sdfm.h"
 
 
 
@@ -105,8 +106,12 @@ interrupt void EPWM7_ISR(void)
 interrupt void ADCA2_ISR(void)
 {
 
-   sdfm_index_SD1 = 1;                        // Quando entra na interrupção de controle seta o index
-   sdfm_index_SD2 = 1;
+   sdfm_index_SD1_vn = 1;               // Quando entra na interrupção de controle seta o index
+   sdfm_index_SD2_vp = 1;
+   sdfm_index_SD2_ia = 1;
+   sdfm_index_SD2_ib = 1;
+
+   static volatile int pareAqui2=0;
 
   //Habilita interrupções simultâneas
     EINT;
@@ -118,6 +123,10 @@ interrupt void ADCA2_ISR(void)
     Instrumentacao_Vdc(); // Leitura da tensão do barramento CC atraves do SDFM
     Instrumentacao_Io(); //Correntes de saída
     Instrumentacao_Vo_inv_Vg(); //Tensões de saida do inversor e da entrada da rede
+
+    if (Vdc_des > 5.f){
+        pareAqui2 = 1;
+    }
 
    //Rampa
     if (estado >= _Operando) {
@@ -145,39 +154,35 @@ interrupt void SD1_ISR(void)
 {
     // Leitura de Vn - SD1 -Filter 3
 
-   Uint32 sdfmReadFlagRegister1 = 0;
+   //Uint32 sdfmReadFlagRegister1 = 0;
    //static uint16_t loopCounter1 = 0;
-   static int index1;
+   union SDIFLG_REG sdfmReadFlagRegister1;
+   static int index1_vn;
 
-    if(sdfm_index_SD1 == 1){
-        sdfm_index_SD1 = 0;
-        index1 = 0;
-    }
-    index1 = index1 + 1;
+   sdfmReadFlagRegister1.all = Sdfm_readFlagRegister(SDFM1);
+
+   if(sdfmReadFlagRegister1.bit.AF3 == 1){
+
+       if(sdfm_index_SD1_vn == 1){
+
+           sdfm_index_SD1_vn = 0;
+           index1_vn = 0;
+       }
+
+    index1_vn = index1_vn + 1;
+
+   }
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;         // Must acknowledge the PIE group
 
-    sdfmReadFlagRegister1 = Sdfm_readFlagRegister(SDFM1);
 
-    /*
-    if(loopCounter1 < MAX_SAMPLES)
-          {
-            Filter3_Result_SD1[loopCounter1++] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1);  // Vn - lado negativo
-          }
-        else
-           {
-            loopCounter1 = 0;  // volta para o incio do vetor
-            Filter3_Result_SD1[loopCounter1++] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1);  // Vn
-           }
-    */
-
-    if (index1 == 7){
+    if (index1_vn == 7){
         Filter3_Result_SD1 [0] = ~(SDFM1_READ_FILTER3_DATA_16BIT-1); // Vn
     }
 
-    Sdfm_clearFlagRegister(SDFM1,sdfmReadFlagRegister1);
+    Sdfm_clearFlagRegister(SDFM1,sdfmReadFlagRegister1.all);
 
-    sdfmReadFlagRegister1 = Sdfm_readFlagRegister(SDFM1);
+    //sdfmReadFlagRegister1 = Sdfm_readFlagRegister(SDFM1);
 
 }
 
@@ -186,46 +191,76 @@ interrupt void SD2_ISR(void)
 {
     // Leitura de Ia - SD2 -Filter 2, Ib SD2 Filter 3, Vp SD2 Filter 4
 
-    Uint32 sdfmReadFlagRegister2 = 0;
+    //Uint32 sdfmReadFlagRegister2 = 0;
     //static uint16_t loopCounter2 = 0;
-    static int index2;
+    union SDIFLG_REG sdfmReadFlagRegister2;
+    static volatile int index2_vp;
+    static volatile int index2_ia;
+    static volatile int index2_ib;
+    static volatile int pareAqui = 0;
 
-    if(sdfm_index_SD2 == 1){
-        sdfm_index_SD2 = 0;
-        index2 = 0;
+    sdfmReadFlagRegister2.all = Sdfm_readFlagRegister(SDFM2);
+
+    if(sdfmReadFlagRegister2.bit.AF4 == 1){
+
+        if(sdfm_index_SD2_vp == 1){
+            sdfm_index_SD2_vp = 0;
+            index2_vp = 0;
+        }
+
+        index2_vp = index2_vp + 1;
+
     }
 
-    index2 = index2 + 1;
+    if(sdfmReadFlagRegister2.bit.AF2 == 1){
+
+        if(sdfm_index_SD2_ia == 1){
+            sdfm_index_SD2_ia = 0;
+            index2_ia = 0;
+        }
+
+        index2_ia = index2_ia + 1;
+
+    }
+
+    if(sdfmReadFlagRegister2.bit.AF3 == 1){
+
+        if(sdfm_index_SD2_ib == 1){
+            sdfm_index_SD2_ib = 0;
+            index2_ib = 0;
+        }
+
+        index2_ib = index2_ib + 1;
+
+    }
 
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;         // Must acknowledge the PIE group
 
-    sdfmReadFlagRegister2 = Sdfm_readFlagRegister(SDFM2);
 
-    /*
-    if(loopCounter2 < MAX_SAMPLES)
-           {
-            Filter2_Result_SD2[loopCounter2] = SDFM2_READ_FILTER2_DATA_16BIT;  // Ia
-            Filter3_Result_SD2[loopCounter2] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
-            Filter4_Result_SD2[loopCounter2++] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
-           }
-    else
-            {
-                loopCounter2 = 0;  // volta para o incio do vetor
-                Filter2_Result_SD2[loopCounter2] = SDFM2_READ_FILTER2_DATA_16BIT;  // Ia
-                Filter3_Result_SD2[loopCounter2] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
-                Filter4_Result_SD2[loopCounter2++] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
+    if (index2_vp == 7){
 
-            }
-            */
+        Filter4_Result_SD2[0] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
 
-    if (index2 == 7){
-            Filter2_Result_SD2[0] = SDFM2_READ_FILTER2_DATA_16BIT; // Ia
-            Filter3_Result_SD2[0] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
-            Filter4_Result_SD2[0] = ~(SDFM2_READ_FILTER4_DATA_16BIT-1);  // inverter o sinal VP
+        if (Filter4_Result_SD2[0] < 10){
+            pareAqui = 1;
         }
+    }
 
-    Sdfm_clearFlagRegister(SDFM2,sdfmReadFlagRegister2);
-    sdfmReadFlagRegister2 = Sdfm_readFlagRegister(SDFM2);
+    if (index2_ia == 7){
+
+        Filter2_Result_SD2[0] = SDFM2_READ_FILTER2_DATA_16BIT; // Ia
+    }
+
+    if (index2_ib == 7){
+
+        Filter3_Result_SD2[0] = SDFM2_READ_FILTER3_DATA_16BIT;  // Ib
+    }
+
+     //Sdfm2Regs.SDIFLGCLR.bit.MIF = 1;
+    Sdfm_clearFlagRegister(SDFM2,sdfmReadFlagRegister2.all);
+    //sdfmReadFlagRegister2.all = Sdfm_readFlagRegister(SDFM2);
+
+
 
 }
 
@@ -627,6 +662,7 @@ INLINE void Instrumentacao_Vdc()
 INLINE void Instrumentacao_Io()
 {
     unsigned fase;
+    static float *Ptr_buf1 = var_teste2;
 
     Io_signed[0] = Filter2_Result_SD2[0]- Offset_Io_a;
     Io_signed[1] = Filter3_Result_SD2[0]- Offset_Io_b;
@@ -651,6 +687,13 @@ INLINE void Instrumentacao_Io()
                  ForceTrip();
                  TrocarEstado(_Protecao);
              }
+
+    *Ptr_buf1++ = Io[0];
+
+    if( Ptr_buf1 == (var_teste2 + 50) )
+        {
+        Ptr_buf1 = var_teste2;           // Rewind the pointer to beginning
+        }
 
 }
 

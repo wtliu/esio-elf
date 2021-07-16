@@ -215,7 +215,7 @@ extern uint16_t CMPC11, CMPD11;  // Variaveis para sincronizar o SDFM com os PWM
 extern uint16_t CMPC12, CMPD12;
 
 
-extern int sdfm_index_SD1, sdfm_index_SD2; // variavel para indexar a amostra para sinc
+extern int sdfm_index_SD1_vn, sdfm_index_SD2_vp, sdfm_index_SD2_ia, sdfm_index_SD2_ib; // variavel para indexar a amostra para sinc
 
 
 // Variaveis de teste
@@ -223,6 +223,7 @@ extern int sdfm_index_SD1, sdfm_index_SD2; // variavel para indexar a amostra pa
 extern Uint16 Med_teste;
 extern int16_t  var_teste[50];
 extern float  var_teste1[50];
+extern float  var_teste2[50];
 
 //Funçoes externas
 void TrocarEstado(eEstado novo_estado);

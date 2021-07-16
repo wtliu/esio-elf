@@ -193,7 +193,7 @@ void Inicializacao_Controle() {
     cont_descarte = 0;
 
    //
-    sdfm_index_SD1 = sdfm_index_SD2 = 0;
+    sdfm_index_SD1_vn = sdfm_index_SD2_vp = sdfm_index_SD2_ia = sdfm_index_SD2_ib = 0;
 
 }
 
